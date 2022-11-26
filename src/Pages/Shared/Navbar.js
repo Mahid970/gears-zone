@@ -1,23 +1,33 @@
+import { signOut } from "firebase/auth";
 import React from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { Link } from "react-router-dom";
+import auth from "../../firebase.init";
 
-const Navebar = () => {
+const Navbar = () => {
+  const [user, loading, error] = useAuthState(auth);
+
+  const logout = () => {
+    signOut(auth);
+    localStorage.removeItem("accessToken");
+  };
+
   const menuItems = (
     <>
       <li>
         <Link to="/">Home</Link>
       </li>
       <li>
-        <Link to="/appointment">Appointment</Link>
-      </li>
-      <li>
-        <Link to="/blog">Blog</Link>
+        <Link to="/products">Products</Link>
       </li>
       <li>
         <Link to="/contact">Contact</Link>
       </li>
       <li>
         <Link to="/about">About</Link>
+      </li>
+      <li>
+        <Link to="/dashboard">Dashboard</Link>
       </li>
     </>
   );
@@ -49,20 +59,34 @@ const Navebar = () => {
               {menuItems}
             </ul>
           </div>
-          <a className="btn btn-ghost normal-case font-bold lg:text-3xl text-xl">
+          <Link
+            to="/"
+            className="btn btn-ghost normal-case font-bold lg:text-3xl text-xl"
+          >
             Gears Zone
-          </a>
+          </Link>
         </div>
         <div className="navbar-center hidden lg:flex">
           <ul className="menu menu-horizontal p-0">{menuItems}</ul>
         </div>
         <div className="navbar-end">
-          <a className="btn btn-sm mx-4">Login</a>
-          <a className="btn btn-sm">Sign Up</a>
+          {user ? (
+            <button onClick={logout} class="btn btn-ghost">
+              Sign Out
+            </button>
+          ) : (
+            <Link className="btn btn-sm mx-4" to="/login">
+              Login
+            </Link>
+          )}
+
+          <Link className="btn btn-sm mx-4" to="/signUp">
+            Sign Up
+          </Link>
         </div>
       </div>
     </div>
   );
 };
 
-export default Navebar;
+export default Navbar;
